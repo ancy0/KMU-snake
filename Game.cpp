@@ -79,20 +79,20 @@ void DrawMap(int n)
     init_pair(5,COLOR_GREEN,COLOR_GREEN);
     init_pair(6,COLOR_RED,COLOR_RED);
     while((c=map.get())!=EOF) {
-        if(c=='1'){
+        if(c=='2'){
         mapData[row][col++] = c;
         wattron(gameBoard,COLOR_PAIR(1));
         wprintw(gameBoard,"%c",'X');
         wattroff(gameBoard,COLOR_PAIR(1));
         }
-        else if(c=='0'){
+        else if(c=='1'){
         mapData[row][col++] = c;
         wall.push_back(CharPos(row,col));
         wattron(gameBoard,COLOR_PAIR(1));
         wprintw(gameBoard,"%c",'#');
         wattroff(gameBoard,COLOR_PAIR(1));
         }
-        else if(c=='2') {
+        else if(c=='0') {
         mapData[row][col++] = c;
         wprintw(gameBoard,"%c",' ');
         }
