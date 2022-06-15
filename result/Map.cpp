@@ -31,7 +31,7 @@ void initWindow(){
 }
 
 
-void theEnd(){
+void gameEnd(){
   delwin(score);
   delwin(mission);
   clear();
@@ -53,8 +53,8 @@ void initSet(){
 	init_pair(1, COLOR_WHITE, COLOR_BLACK); // 기본 배경 색 설정
 	init_pair(2, COLOR_RED, COLOR_GREEN); // 게이트
 	init_pair(3, COLOR_WHITE, COLOR_MAGENTA);  //머리
-	init_pair(4, COLOR_BLACK, COLOR_CYAN); // +아이템
-  init_pair(5, COLOR_CYAN, COLOR_MAGENTA); // -아이템
+	init_pair(4, COLOR_RED, COLOR_CYAN); // +아이템
+  init_pair(5, COLOR_CYAN, COLOR_RED); // -아이템
   init_pair(7, COLOR_BLACK, COLOR_WHITE); // 점수보드, 미션보드
   init_pair(8, COLOR_MAGENTA, COLOR_BLACK); //몸
 
