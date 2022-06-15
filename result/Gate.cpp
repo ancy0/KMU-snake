@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include "Gate.h"
 #include "Map.h"
-extern vector<array<int, 2>> wall;
+extern vector<array<int, 2>> isWall;
 
 Gate::Gate(Head &head, Body &body) : hd(&head), bd(&body) {}
 
@@ -14,17 +14,17 @@ Gate& Gate::operator=(const Gate& g){
 
 void Gate::init() {
 		srand(time(NULL));
-		int i = rand()%wall.size();
-		int j = rand()%wall.size();
-		x1 = wall[i][1], x2 = wall[j][1];
-		y1 = wall[i][0], y2 = wall[j][0];
+		int i = rand()%isWall.size();
+		int j = rand()%isWall.size();
+		x1 = isWall[i][1], x2 = isWall[j][1];
+		y1 = isWall[i][0], y2 = isWall[j][0];
 		attron(COLOR_PAIR(6));
 		mvprintw(y1, x1, "7");
 		while (i == j) {
 			srand(time(NULL));
-			j = rand()%wall.size();
-			x2 = wall[j][1];
-			y2 = wall[j][0];
+			j = rand()%isWall.size();
+			x2 = isWall[j][1];
+			y2 = isWall[j][0];
 		}
 		mvprintw(y2, x2, "7");
 		attroff(COLOR_PAIR(6));
