@@ -2,7 +2,8 @@
 #include <cstdlib>
 #include "Gate.h"
 #include "Map.h"
-extern vector<array<int, 2>> isWall;
+
+extern vector<array<int, 2>> wall;
 
 Gate::Gate(Head &head, Body &body) : hd(&head), bd(&body) {}
 
@@ -14,17 +15,17 @@ Gate& Gate::operator=(const Gate& g){
 
 void Gate::init() {
 		srand(time(NULL));
-		int i = rand()%isWall.size();
-		int j = rand()%isWall.size();
-		x1 = isWall[i][1], x2 = isWall[j][1];
-		y1 = isWall[i][0], y2 = isWall[j][0];
+		int i = rand()%wall.size();
+		int j = rand()%wall.size();
+		x1 = wall[i][1], x2 = wall[j][1];
+		y1 = wall[i][0], y2 = wall[j][0];
 		attron(COLOR_PAIR(6));
 		mvprintw(y1, x1, "7");
 		while (i == j) {
 			srand(time(NULL));
-			j = rand()%isWall.size();
-			x2 = isWall[j][1];
-			y2 = isWall[j][0];
+			j = rand()%wall.size();
+			x2 = wall[j][1];
+			y2 = wall[j][0];
 		}
 		mvprintw(y2, x2, "7");
 		attroff(COLOR_PAIR(6));
@@ -40,9 +41,8 @@ void Gate::clear() {
 	refresh();
 }
 
-int Gate::passHead() {
-	// 생성 후 15초가 지나면 아이템 사라짐
-	if (time(NULL) - t > 15) {
+int Gate::headCase() {
+	if (time(NULL) - t > 15) { // 생성된 아이템은 15초 후 제거
 		clear();
 		return 1;
 	}
@@ -50,55 +50,43 @@ int Gate::passHead() {
 	int hy = hd->getY(); int hx = hd->getX();
 	int by = bd->y[0]; int bx = bd->x[0];
 	int y = hy-by; int x = hx-bx;
-	if(hy == y1 && hx == x1){
-		// 게이트가 가장자리에 있을 때
-		if (y2 == 0) hd->setposition(-hy+y2+1, -hx+x2);
-		else if (y2 == HEIGHT-1) hd->setposition(-hy+y2-1, -hx+x2);
-		else if (x2 == 0) hd->setposition(-hy+y2, -hx+x2+1);
-		else if (x2 == WIDTH-1) hd->setposition(-hy+y2, -hx+x2-1);
-		// 게이트가 가장자리에 있지 않을 때
-		// snake가 위아래로 진행중일 때
-		else if(y){
-			// 진행방향
-			if ((mvinch(y2+y, x2+x) & A_CHARTEXT) != '1') hd->setposition(-hy+y2+y, -hx+x2+x);
-			// 벽에 막혀있으면 진행방향의 시계방향
-			else if ((mvinch(y2-x, x2-y) & A_CHARTEXT) != '1') hd->setposition(-hy+y2-x, -hx+x2-y);
-			// 벽에 막혀있으면 진행방향의 역시계방향
-			else if ((mvinch(y2+x, x2+y) & A_CHARTEXT) != '1') hd->setposition(-hy+y2+x, -hx+x2+y);
-			// 벽에 막혀있으면 진행방향의 반대방향 (아래도 모두 동일)
-			else hd->setposition(-hy+y2-y, -hx+x2-x);
+	if(hy == y1 && hx == x1){ // 게이트가 가장자리에 위치
+		if (y2 == 0) hd->position(-hy+y2+1, -hx+x2);
+		else if (y2 == HEIGHT-1) hd->position(-hy+y2-1, -hx+x2);
+		else if (x2 == 0) hd->position(-hy+y2, -hx+x2+1);
+		else if (x2 == WIDTH-1) hd->position(-hy+y2, -hx+x2-1);
+		else if(y){ // 게이트가 가장자리에 위치 x, snake가 상하로 진행
+			if ((mvinch(y2+y, x2+x) & A_CHARTEXT) != '1') hd->position(-hy+y2+y, -hx+x2+x); // 진행방향
+			else if ((mvinch(y2-x, x2-y) & A_CHARTEXT) != '1') hd->position(-hy+y2-x, -hx+x2-y); // 벽에 막혀있다면 진행방향의 시계방향
+			else if ((mvinch(y2+x, x2+y) & A_CHARTEXT) != '1') hd->position(-hy+y2+x, -hx+x2+y); // 벽에 막혀있다면 진행방향의 역시계방향
+			else hd->position(-hy+y2-y, -hx+x2-x); // 벽에 막혀있다면 진행방향의 반대방향
 		}
-		// snake가 좌우로 진행중일 때
-		else{
-			if ((mvinch(y2+y, x2+x) & A_CHARTEXT) != '1') hd->setposition(-hy+y2+y, -hx+x2+x);
-			else if ((mvinch(y2+x, x2+y) & A_CHARTEXT) != '1') hd->setposition(-hy+y2+x, -hx+x2+y);
-			else if ((mvinch(y2-x, x2-y) & A_CHARTEXT) != '1') hd->setposition(-hy+y2-x, -hx+x2-y);
-			else hd->setposition(-hy+y2-y, -hx+x2-x);
+		else{ // 게이트가 가장자리에 위치 x, snake가 좌우로 진행
+			if ((mvinch(y2+y, x2+x) & A_CHARTEXT) != '1') hd->position(-hy+y2+y, -hx+x2+x); // 진행방향
+			else if ((mvinch(y2+x, x2+y) & A_CHARTEXT) != '1') hd->position(-hy+y2+x, -hx+x2+y); // 벽에 막혀있다면 진행방향의 시계방향
+			else if ((mvinch(y2-x, x2-y) & A_CHARTEXT) != '1') hd->position(-hy+y2-x, -hx+x2-y); // 벽에 막혀있다면 진행방향의 역시계방향
+			else hd->position(-hy+y2-y, -hx+x2-x); // 벽에 막혀있다면 진행방향의 반대방향
 		}
 		keyinyx[0] = hd->getY()-y2;
 		keyinyx[1] = hd->getX()-x2;
 		return -1;
 	}
 	else if(hy == y2 && hx == x2){
-		// 게이트가 가장자리에 있을 때
-		if (y1 == 0) hd->setposition(-hy+y1+1, -hx+x1);
-		else if (y1 == HEIGHT-1) hd->setposition(-hy+y1-1, -hx+x1);
-		else if (x1 == 0) hd->setposition(-hy+y1, -hx+x1+1);
-		else if (x1 == WIDTH-1) hd->setposition(-hy+y1, -hx+x1-1);
-		// 게이트가 가장자리에 있지 않을 때
-		// snake가 위아래로 진행중일 때
-		else if(y){
-			if ((mvinch(y1+y, x1+x) & A_CHARTEXT) != '1') hd->setposition(-hy+y1+y, -hx+x1+x);
-			else if ((mvinch(y1-x, x1-y) & A_CHARTEXT) != '1') hd->setposition(-hy+y1-x, -hx+x1-y);
-			else if ((mvinch(y1+x, x1+y) & A_CHARTEXT) != '1') hd->setposition(-hy+y1+x, -hx+x1+y);
-			else hd->setposition(-hy+y1-y, -hx+x1-x);
+		if (y1 == 0) hd->position(-hy+y1+1, -hx+x1); // 게이트가 가장자리에 위치
+		else if (y1 == HEIGHT-1) hd->position(-hy+y1-1, -hx+x1);
+		else if (x1 == 0) hd->position(-hy+y1, -hx+x1+1);
+		else if (x1 == WIDTH-1) hd->position(-hy+y1, -hx+x1-1);
+		else if(y){ // 게이트가 가장자리에 위치 x, snake가 상하로 진행
+			if ((mvinch(y1+y, x1+x) & A_CHARTEXT) != '1') hd->position(-hy+y1+y, -hx+x1+x); // 진행방향
+			else if ((mvinch(y1-x, x1-y) & A_CHARTEXT) != '1') hd->position(-hy+y1-x, -hx+x1-y); // 벽에 막혀있다면 진행방향의 시계방향
+			else if ((mvinch(y1+x, x1+y) & A_CHARTEXT) != '1') hd->position(-hy+y1+x, -hx+x1+y); // 벽에 막혀있다면 진행방향의 역시계방향
+			else hd->position(-hy+y1-y, -hx+x1-x); // 벽에 막혀있다면 진행방향의 반대방향
 		}
-		// snake가 좌우로 진행중일 때
-		else{
-			if ((mvinch(y1+y, x1+x) & A_CHARTEXT) != '1') hd->setposition(-hy+y1+y, -hx+x1+x);
-			else if ((mvinch(y1+x, x1+y) & A_CHARTEXT) != '1') hd->setposition(-hy+y1+x, -hx+x1+y);
-			else if ((mvinch(y1-x, x1-y) & A_CHARTEXT) != '1') hd->setposition(-hy+y1-x, -hx+x1-y);
-			else hd->setposition(-hy+y1-y, -hx+x1-x);
+		else{ // 게이트가 가장자리에 위치 x, snake가 좌우로 진행
+			if ((mvinch(y1+y, x1+x) & A_CHARTEXT) != '1') hd->position(-hy+y1+y, -hx+x1+x); // 진행방향
+			else if ((mvinch(y1+x, x1+y) & A_CHARTEXT) != '1') hd->position(-hy+y1+x, -hx+x1+y); // 벽에 막혀있다면 진행방향의 시계방향
+			else if ((mvinch(y1-x, x1-y) & A_CHARTEXT) != '1') hd->position(-hy+y1-x, -hx+x1-y); // 벽에 막혀있다면 진행방향의 역시계방향
+			else hd->position(-hy+y1-y, -hx+x1-x); // 벽에 막혀있다면 진행방향의 반대방향
 		}
 		keyinyx[0] = hd->getY()-y1;
 		keyinyx[1] = hd->getX()-x1;
