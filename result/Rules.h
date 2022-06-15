@@ -1,41 +1,36 @@
 #ifndef __RULES_H_
 #define __RULES_H_
-
 #include <vector>
 
-class Head {
+#define LEN 50
+
+class Head { // snake 머리
     int y, x;
 public:
-    // 생성자 : 화면의 중앙에서 나타나도록 한다.
     Head();
-    void init();
+    void init(); // snake를 화면 중앙에 위치
 
     int getY() { return y; }
     int getX() { return x; }
 
-    // 상하좌우 방향을 입력 받아 위치를 바꾼다.
-    void setposition(int i, int j);
+    void position(int i, int j); // 방향 입력받아 위치 바꾸기
     void show();
 };
 
-
-#define MAXLEN 100
-class Body {
+class Body { // snake 몸
 public:
-    int len; int x[MAXLEN] = { 0 }, y[MAXLEN] = { 0 };
+    int len; int x[LEN] = { 0 }, y[LEN] = { 0 };
     Body();
     void init();
 
-    void setposition(int i, int j);
+    void position(int i, int j);
     void show();
 
     void IncBody();
     void DecBody();
 
     void del();
-
 };
-
 
 class Snake {
     Head hd; Body bd;
@@ -46,13 +41,14 @@ class Snake {
     std::vector<int> state = {3,0,0,0,3};
      int level = 1;
      bool levelUp = false;
+
 public:
     Snake();
 
     void move();
-    void keyIn(int y, int x);
+    void keyInput(int y, int x);
 
-    int moveControl(float secs);
+    int control(float s);
     static void fail();
     static void succeed();
 
@@ -62,7 +58,7 @@ public:
     void makeGate();
     void isPassingGate();
 
-    // 현재 Snake의 미션 진행률에 따른 값 변화.
+    // 현재 미션 진행률에 따른 값 변화
     void plusBody() { state[0]++; }
     void minusBody() { state[0]--; }
     void plusItem(){ state[1]++; }
