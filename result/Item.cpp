@@ -74,13 +74,13 @@ Item::Item(Plus p){ plusing = p; }
 Item::Item(Minus m){ minusing = m; }
 
 int Item::rules(){
-		if (plusing.getX()) { return plusing.PlusRule(); }
-		else{ return minusing.MinusRule(); }
+	if (plusing.getX()) { return plusing.PlusRule(); }
+	else{ return minusing.MinusRule(); }
 }
 
 void Item::clear(){
-		if (plusing.getX()) { mvprintw(plusing.getY(), plusing.getX(), " "); }
-		else{ mvprintw(minusing.getY(), minusing.getX(), " "); }
+	if (plusing.getX()) { mvprintw(plusing.getY(), plusing.getX(), " "); }
+	else{ mvprintw(minusing.getY(), minusing.getX(), " "); }
 }
 
 int Item::ItemCheck(){
