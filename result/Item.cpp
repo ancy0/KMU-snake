@@ -14,7 +14,7 @@ Plus::Plus(Head &head, Body &body) : hd(&head), bd(&body) { // 랜덤으로 x, y
 	while (pos == '1' || pos == '2' || pos == '3' || pos == '4' || pos == '5' || pos == '6' || pos == '7');
 
 	attron(COLOR_PAIR(4));
-	mvprintw(y, x, "5");
+	mvprintw(y, x, "+");
 	attroff(COLOR_PAIR(4));
 	refresh();
 
@@ -25,7 +25,7 @@ int Plus::PlusRule() {
 	if (time(NULL) - t > 10) { // 생성된 아이템은 10초 후 제거
 		mvprintw(y, x, " ");
 		refresh();
-		return -1;거
+		return -1;
 	}
 	if (x == hd->getX() && y == hd->getY()) { // snake의 머리와 아이템이 만나면 아이템 제거
 		mvprintw(y, x, " ");
@@ -47,7 +47,7 @@ Minus::Minus(Head &head, Body &body) : hd(&head), bd(&body) { // 랜덤으로 x,
 	while (pos == '1' || pos == '2' || pos == '3' || pos == '4' || pos == '5' || pos == '6' || pos == '7');
 
 	attron(COLOR_PAIR(5));
-	mvprintw(y, x, "6");
+	mvprintw(y, x, "-");
 	attroff(COLOR_PAIR(5));
 	refresh();
 
