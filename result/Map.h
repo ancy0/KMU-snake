@@ -21,7 +21,7 @@ extern vector<int> missions;
 // 첫화면, 엔터키(상관없음) 입력 시 시작
 void initWindow();
 // 최종 창, 자동 종료
-void theEnd();
+void gameEnd();
 // 기본 세팅
 void initSet();
 // 맵 업데이트
