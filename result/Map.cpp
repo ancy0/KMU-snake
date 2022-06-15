@@ -8,7 +8,7 @@
 using namespace std;
 
 // Gate가 생길 수 있는 wall 좌표들을 모아놓은 벡터
-vector<array<int, 2>> isWall;
+vector<array<int, 2>> wall;
 
 bool isEnd = false;
 
@@ -51,12 +51,11 @@ void initSet(){
   noecho();     //  입력한 값을 화면에 출력X
   start_color();
 	init_pair(1, COLOR_WHITE, COLOR_BLACK); // 기본 배경 색 설정
-	init_pair(2, COLOR_RED, COLOR_GREEN); //
+	init_pair(2, COLOR_RED, COLOR_GREEN); // 게이트
 	init_pair(3, COLOR_WHITE, COLOR_MAGENTA);  //머리
 	init_pair(4, COLOR_BLACK, COLOR_CYAN); // +아이템
   init_pair(5, COLOR_CYAN, COLOR_MAGENTA); // -아이템
-	init_pair(6, COLOR_WHITE, COLOR_BLACK); // 미션보드
-  init_pair(7, COLOR_BLACK, COLOR_WHITE); // 점수보드
+  init_pair(7, COLOR_BLACK, COLOR_WHITE); // 점수보드, 미션보드
   init_pair(8, COLOR_MAGENTA, COLOR_BLACK); //몸
 
 	bkgd(COLOR_PAIR(1));
@@ -64,7 +63,7 @@ void initSet(){
 
 void DrawMap(int stage){
   clear();
-  isWall.clear();
+  wall.clear();
   attron(COLOR_PAIR(1));
   switch(stage){ //맵 속 벽
     case 1:
@@ -155,7 +154,7 @@ void DrawMap(int stage){
       for(int j = 0; j < WIDTH; j++)
         if((mvinch(i, j) & A_CHARTEXT) == '#') {
           array<int, 2> a = {i, j};
-          isWall.emplace_back(a);
+          wall.emplace_back(a);
         }
     }
     refresh();
@@ -172,7 +171,7 @@ void DrawBoard(){
   makeFrame(score, "Score Board");
   // 미션보드
   mission = newwin(9, 30, 10, 65);
-  wbkgd(mission, COLOR_PAIR(6));
+  wbkgd(mission, COLOR_PAIR(7));
   for(int i=3; i<7; i++){
     mvwprintw(mission, i, 7, "( )");
   }
