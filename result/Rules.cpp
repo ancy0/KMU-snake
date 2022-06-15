@@ -21,7 +21,7 @@ void Head::position(int i, int j) { y += i, x += j; }
 
 void Head::show() {
     attron(COLOR_PAIR(3));
-    mvprintw(y, x, "3");
+    mvprintw(y, x, "H");
     attroff(COLOR_PAIR(3));
 }
 
@@ -30,7 +30,7 @@ Body::Body() {
 }
 
 void Body::init() {
-    len = 2; std::fill_n(x, MAXLEN, 0); std::fill_n(y, MAXLEN, 0);
+    len = 2; std::fill_n(x, LEN, 0); std::fill_n(y, LEN, 0);
     y[0] = y[1] = HEIGHT/2; x[0] = WIDTH/2+1; x[1] = x[0]+1;
     show();
 }
@@ -51,7 +51,7 @@ void Body::position(int i, int j) { // 몸은 머리에 종속적 -> 머리의 �
 void Body::show() {
     attron(COLOR_PAIR(8));
     for (int i = 0; i < len; i++) {
-        mvprintw(y[i], x[i], "4");
+        mvprintw(y[i], x[i], "B");
     }
     attroff(COLOR_PAIR(8));
 }
@@ -89,7 +89,7 @@ void Snake::move() {
       if(state[0]>state[4]) UpdateBoard(score, state);
 
       if(passtime == 1) { // 게이트 통과시 알맞은 방향으로 진행
-      	keyIn(gate.keyinyx[0], gate.keyinyx[1]);
+      	keyInput(gate.key[0], gate.key[1]);
         control(0.4);
         continue;
       }
@@ -119,7 +119,7 @@ void Snake::move() {
 
       if(levelUp){
         if(level==4) { // 4단계 모두 통과
-          theEnd();
+          gameEnd();
           return;
         }
         level++;
@@ -160,7 +160,7 @@ void Snake::keyInput(int y, int x) {
     }
     if(levelUp) {
       if(level==4) { // 4단계 모두 통과시
-        theEnd();
+        gameEnd();
         return;
       }
       level++;
@@ -172,15 +172,15 @@ void Snake::keyInput(int y, int x) {
     refresh();
 }
 
-int Snake::control(float secs) { // 키 입력이 들어오면 해당 방향으로 움직임 제어
+int Snake::control(float s) { // 키 입력이 들어오면 해당 방향으로 움직임 제어
     clock_t control = s * CLOCKS_PER_SEC;
     clock_t start = clock();
     while ((clock() - start) < control){
       makeItem();
       if(GameOver == true) break;
       char keyIn;
-      if(key = getch()){
-        switch(key){
+      if(keyIn = getch()){
+        switch(keyIn){
           case 'w':
             keyInput(-1,0);
             start = clock();
@@ -252,12 +252,12 @@ void Snake::makeItem() {
 
 void Snake::itemRule(){
       for(int i = item.size() - 1; i >= 0; i--) {
-        if(item[i].rule() == -1){
-          if(item[i].CheckItem() == 1) {
+        if(item[i].rules() == -1){
+          if(item[i].ItemCheck() == 1) {
             plusBody(); plusItem();
             checkMission();
           }
-          else if(item[i].CheckItem() == 2) {
+          else if(item[i].ItemCheck() == 2) {
             minusBody(); plusPoison();
             checkMission();
           }
@@ -278,7 +278,7 @@ void Snake::makeGate() {
 void Snake::isPassingGate() {
     if(!isGate || passtime) return;
 
-    int n = gate.passHead();
+    int n = gate.headCase();
     if(n == 1) {
       isGate = false;
       gate.clear();
