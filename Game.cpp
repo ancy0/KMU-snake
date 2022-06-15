@@ -123,7 +123,7 @@ void DrawBoard(){
   //score board
   score = newwin(9, 30, 1, 65);
   wbkgd(score, COLOR_PAIR(7));
-  mvwprintw(score, 3, 6, "/   (Max Body Length)");
+  mvwprintw(score, 3, 6, "/   (Max Length)");
   makeFrame(score, "Score Board");
   // mission board
   mission = newwin(9, 30, 10, 65);
