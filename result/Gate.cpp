@@ -19,25 +19,25 @@ void Gate::init() {
 		int j = rand()%wall.size();
 		x1 = wall[i][1], x2 = wall[j][1];
 		y1 = wall[i][0], y2 = wall[j][0];
-		attron(COLOR_PAIR(6));
-		mvprintw(y1, x1, "7");
+		attron(COLOR_PAIR(2));
+		mvprintw(y1, x1, "G");
 		while (i == j) {
 			srand(time(NULL));
 			j = rand()%wall.size();
 			x2 = wall[j][1];
 			y2 = wall[j][0];
 		}
-		mvprintw(y2, x2, "7");
-		attroff(COLOR_PAIR(6));
+		mvprintw(y2, x2, "G");
+		attroff(COLOR_PAIR(2));
 		t = time(NULL);
 		refresh();
 }
 
 void Gate::clear() {
-	attron(COLOR_PAIR(2));
-	mvprintw(y1, x1, "1");
-	mvprintw(y2, x2, "1");
-	attroff(COLOR_PAIR(2));
+	attron(COLOR_PAIR(1));
+	mvprintw(y1, x1, "#");
+	mvprintw(y2, x2, "#");
+	attroff(COLOR_PAIR(1));
 	refresh();
 }
 
@@ -67,8 +67,8 @@ int Gate::headCase() {
 			else if ((mvinch(y2-x, x2-y) & A_CHARTEXT) != '1') hd->position(-hy+y2-x, -hx+x2-y); // 벽에 막혀있다면 진행방향의 역시계방향
 			else hd->position(-hy+y2-y, -hx+x2-x); // 벽에 막혀있다면 진행방향의 반대방향
 		}
-		keyinyx[0] = hd->getY()-y2;
-		keyinyx[1] = hd->getX()-x2;
+		key[0] = hd->getY()-y2;
+		key[1] = hd->getX()-x2;
 		return -1;
 	}
 	else if(hy == y2 && hx == x2){
@@ -88,8 +88,8 @@ int Gate::headCase() {
 			else if ((mvinch(y1-x, x1-y) & A_CHARTEXT) != '1') hd->position(-hy+y1-x, -hx+x1-y); // 벽에 막혀있다면 진행방향의 역시계방향
 			else hd->position(-hy+y1-y, -hx+x1-x); // 벽에 막혀있다면 진행방향의 반대방향
 		}
-		keyinyx[0] = hd->getY()-y1;
-		keyinyx[1] = hd->getX()-x1;
+		key[0] = hd->getY()-y1;
+		key[1] = hd->getX()-x1;
 		return -1;
 	}
 	return 0;
