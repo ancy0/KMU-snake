@@ -4,8 +4,7 @@
 #include "Item.h"
 #include "Map.h"
 
-Growth::Growth(Head &head, Body &body) : hd(&head), bd(&body) {
-	// snake, 벽, 이미 생성된 아이템 자리 제외하고 랜덤으로 x, y 받아서 아이템 생성
+Plus::Plus(Head &head, Body &body) : hd(&head), bd(&body) { // 랜덤으로 x, y 받아서 아이템 생성 (map의 벽, snake의 위치, 이미 생성된 아이템의 자리 제외)
 	do {
 		srand(time(NULL));
 		x = rand()%(WIDTH-2)+1;
@@ -14,36 +13,31 @@ Growth::Growth(Head &head, Body &body) : hd(&head), bd(&body) {
 	}
 	while (pos == '1' || pos == '2' || pos == '3' || pos == '4' || pos == '5' || pos == '6' || pos == '7');
 
-	attron(COLOR_PAIR(4));  // item color on
+	attron(COLOR_PAIR(4));
 	mvprintw(y, x, "5");
-	attroff(COLOR_PAIR(4)); // off
+	attroff(COLOR_PAIR(4));
 	refresh();
 
 	t = time(NULL);
 }
 
-int Growth::GrowthRule() {
-	// 생성 후 10초가 지나면 아이템 사라짐
-	if (time(NULL) - t > 10) {
+int Plus::PlusRule() {
+	if (time(NULL) - t > 10) { // 생성된 아이템은 10초 후 제거
 		mvprintw(y, x, " ");
 		refresh();
-		return -1;
+		return -1;거
 	}
-	// snake head와 만나면 아이템 사라짐
-	if (x == hd->getX() && y == hd->getY()) {
+	if (x == hd->getX() && y == hd->getY()) { // snake의 머리와 아이템이 만나면 아이템 제거
 		mvprintw(y, x, " ");
 
-		// snake body 1 증가
-		bd->IncBody();
-		setItemState(true);
+		bd->IncBody(); // snake 길이 증가
+		setItem(true);
 		return -1;
 	}
 	return 0;
 }
 
-
-Poison::Poison(Head &head, Body &body) : hd(&head), bd(&body) {
-	// snake, 벽, 이미 생성된 아이템 자리 제외하고 랜덤으로 x, y 받아서 아이템 생성
+Minus::Minus(Head &head, Body &body) : hd(&head), bd(&body) { // 랜덤으로 x, y 받아서 아이템 생성 (map의 벽, snake의 위치, 이미 생성된 아이템의 자리 제외)
 	do {
 		srand(time(NULL));
 		x = rand()%(WIDTH-2)+1;
@@ -52,54 +46,51 @@ Poison::Poison(Head &head, Body &body) : hd(&head), bd(&body) {
 	}
 	while (pos == '1' || pos == '2' || pos == '3' || pos == '4' || pos == '5' || pos == '6' || pos == '7');
 
-	attron(COLOR_PAIR(5));  // item color on
+	attron(COLOR_PAIR(5));
 	mvprintw(y, x, "6");
-	attroff(COLOR_PAIR(5)); // off
+	attroff(COLOR_PAIR(5));
 	refresh();
 
 	t = time(NULL);
 }
 
-int Poison::PoisonRule() {
-	// 생성 후 10초가 지나면 아이템 사라짐
-	if (time(NULL) - t > 10) {
+int Minus::MinusRule() {
+	if (time(NULL) - t > 10) { // 생성된 아이템은 10초 후 제거
 		mvprintw(y, x, " ");
 		refresh();
 		return -1;
 	}
-	// snake head와 만나면 아이템 사라짐
-	if (x == hd->getX() && y == hd->getY()) {
+	if (x == hd->getX() && y == hd->getY()) { // snake의 머리와 아이템이 만나면 아이템 제거
 		mvprintw(y, x, " ");
 
-		// snake body 1 감소
-		bd->DecBody();
-		setItemState(true);
+		bd->DecBody(); // snake 길이 감소
+		setItem(true);
 		return -1;
 	}
 	return 0;
 }
 
+Item::Item(Plus p){ plusing = p; }
+Item::Item(Minus m){ minusing = m; }
 
-Item::Item(Growth g){ growp = g; }
-
-Item::Item(Poison p){ poisp = p; }
-
-int Item::rule(){
-		if (growp.getX()) { return growp.GrowthRule(); }
-		else{ return poisp.PoisonRule(); }
+int Item::rules(){
+		if (plusing.getX()) { return plusing.PlusRule(); }
+		else{ return minusing.MinusRule(); }
 }
 
 void Item::clear(){
-		if (growp.getX()) { mvprintw(growp.getY(), growp.getX(), " "); }
-		else{ mvprintw(poisp.getY(), poisp.getX(), " "); }
+		if (plusing.getX()) { mvprintw(plusing.getY(), plusing.getX(), " "); }
+		else{ mvprintw(minusing.getY(), minusing.getX(), " "); }
 }
 
-int Item::CheckItem(){
-	if(growp.getX()){
-		if(growp.getItemState()==true) return 1;
+int Item::ItemCheck(){
+    // 아이템을 얻지 못한 경우(0), 성장 아이템 획득(1), 독 아이템 획득(2) 출력
+	// Plus와 Minus 클래스 결과값을 외부로 전달하기 위한 함수
+	if(plusing.getX()) {
+		if(plusing.getItem()==true) return 1;
 	}
-	else{
-		if(poisp.getItemState()==true) return 2;
+	else {
+		if(plusing.getItem()==true) return 2;
 	}
 	return 0;
 }
