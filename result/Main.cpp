@@ -8,16 +8,16 @@
 
 int main()
 {
-	setBase();
-	theStart();
+	initSet();
+	initWindow();
 	DrawMap(1);
-	Snake snk;
+	Snake sk;
 	if(isEnd==true) return 0;
 	char a = getch();
 	while(a != 'q') {
 		if(a == 'r') {
-			snk.reset();
-			snk.move();
+			sk.reset();
+			sk.move();
 			if(isEnd==true) return 0;
 		}
 		a = getch();
